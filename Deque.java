@@ -23,9 +23,11 @@ public class Deque<Item> implements Iterable<Item>{
 		private Node current = first;
 
 		public boolean hasNext() { return current != null; }
-		public void remove () {};
+		public void remove () { throw new java.lang.UnsupportedOperationException();}
 		public Item next()
 		{
+			if(!(hasNext())) throw new java.util.NoSuchElementException();
+
 			Item item = current.item;
 			current = current.next;
 			return item;
@@ -211,6 +213,14 @@ public class Deque<Item> implements Iterable<Item>{
 			System.out.println(i.next());
 			System.out.println(i.hasNext());
 			//System.out.println(i.next());
+
+			// Type tests
+			Deque a = new Deque();
+			a.addFirst("hello");
+			System.out.println(a.removeFirst());
+			a.removeFirst();
+			a.size();
+
 		}
 
 		catch(java.util.NoSuchElementException e){
