@@ -1,5 +1,6 @@
 import java.util.Iterator;
 import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.StdRandom;
 
 public class Deque<Item> implements Iterable<Item>{
 	// Variables
@@ -23,10 +24,10 @@ public class Deque<Item> implements Iterable<Item>{
 		private Node current = first;
 
 		public boolean hasNext() { return current != null; }
-		public void remove () { throw new java.lang.UnsupportedOperationException()};
+		public void remove () { throw new java.lang.UnsupportedOperationException();}
 		public Item next()
 		{
-			if(!(hasNext()) throw new java.util.NoSuchElementException());
+			if(!(hasNext())) throw new java.util.NoSuchElementException();
 
 			Item item = current.item;
 			current = current.next;
@@ -150,9 +151,10 @@ public class Deque<Item> implements Iterable<Item>{
 
 	public static void main(String[] args){
 
-		Deque d = new Deque();
+		Deque<Integer> d = new Deque<Integer>();
 		System.out.println("Tests______________\n");
 		try{
+			int n = StdRandom.uniform(3);
 			d.addFirst(1);
 			d.addFirst(2);
 			d.addFirst(3);
@@ -206,7 +208,7 @@ public class Deque<Item> implements Iterable<Item>{
 			d.addLast(1);
 			d.addLast(2);
 			d.addLast(3);
-			Iterator i = d.iterator();
+			Iterator<Integer> i = d.iterator<Integer>();
 			System.out.println(i.next());
 			System.out.println(i.next());
 			System.out.println(i.hasNext());
@@ -215,7 +217,7 @@ public class Deque<Item> implements Iterable<Item>{
 			//System.out.println(i.next());
 
 			// Type tests
-			Deque a = new Deque();
+			Deque<String> a = new Deque<String>();
 			a.addFirst("hello");
 			System.out.println(a.removeFirst());
 			a.removeFirst();

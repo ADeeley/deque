@@ -1,5 +1,4 @@
 import java.util.Iterator;
-import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomisedQueue<Item> implements Iterable<Item>{
@@ -81,34 +80,33 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 	}
 	public Item sample()
 	{
-		if(randArr == null)
+		// Create new array [0...n-1] if not already created
+		if(randArr == null || max < 0)
 		{
 			randArr = new int[size];
 			max = size - 1;
 			for(int n = 0; n<size; n++)
 				randArr[n] = n;
 		}
+		// Choose a random element and switch it with the element at max
 		int el = StdRandom.uniform(max + 1);
-		System.out.format("Rand el: %d\n", el);
-		// test start
-		System.out.println("Before RadomArr:");
-		for(int n : randArr)
-			System.out.format("%d, ", n);
-		System.out.println();
-		// test end
-		randArr[max] = el;
-		randArr[el] = max;
+		//System.out.format("Rand el: %d\n", el);
+
+		int rNum = randArr[el];
+		randArr[el] = randArr[max];
+		randArr[max] = rNum;
 		max--;
 
-		// test start
+		/* test start -------------------------------------
 		System.out.println("After RadomArr:");
 		for(int n : randArr)
 			System.out.format("%d, ", n);
 		System.out.println();
-		// test end
+		 test end ---------------------------------------
+		 */
 
 		Node tmpFirst = first;
-		for(int i = randArr[el]; i>0; i--)
+		for(int i = rNum; i>0; i--)
 			tmpFirst = tmpFirst.next;
 
 		return tmpFirst.item;
@@ -116,9 +114,23 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 	}
 	public static void main(String[] args){
 
-		RandomisedQueue d = new RandomisedQueue();
-		System.out.println("Tests______________\n");
 		try{
+			// set up trials number of  elements in a linked list queue with
+			// their array indexes as their item
+			// test sample method()
+			RandomisedQueue<Integer> d = new RandomisedQueue<Integer>();
+			int trials = 5;
+			for(int i=0; i<trials; i++)
+				d.enqueue(i);
+
+			for(int j=0; j<trials*2; j++)
+				System.out.format("Returned %d\n\n", d.sample());
+
+
+
+
+
+			/*
 			d.enqueue(1);
 			d.enqueue(2);
 			d.enqueue(3);
@@ -136,7 +148,9 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 			d.enqueue(0);
 			d.enqueue(1);
 			d.enqueue(2);
-			Iterator i = d.iterator();
+			d.enqueue(3);
+			d.enqueue(4);
+			Iterator<Integer> i = d.iterator();
 			System.out.println(i.next());
 			System.out.println(i.next());
 			System.out.println(i.hasNext());
@@ -144,19 +158,20 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 			System.out.println(i.hasNext());
 			//System.out.println(i.next());
 			System.out.println("Sample tests:");
-			System.out.format("Returned %d\n", d.sample());
-			System.out.format("Returned %d\n", d.sample());
-			System.out.format("Returned %d\n", d.sample());
+			System.out.format("Returned %d\n\n", d.sample());
+			System.out.format("Returned %d\n\n", d.sample());
+			System.out.format("Returned %d\n\n", d.sample());
+			System.out.format("Returned %d\n\n", d.sample());
+			System.out.format("Returned %d\n\n", d.sample());
 
 			// Type tests
-			RandomisedQueue a = new RandomisedQueue();
+			RandomisedQueue<String> a = new RandomisedQueue<String>();
 			StdRandom.setSeed(8);
 			a.enqueue("hello");
-			System.out.println(a.dequeue());
-			a.dequeue();
+			//System.out.println(a.dequeue());
+			//a.dequeue();
 			a.size();
-
-
+			*/
 		}
 
 		catch(java.util.NoSuchElementException e){
