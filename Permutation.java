@@ -35,6 +35,18 @@ public class Permutation {
                 queue = newQueue;
             }
         }
+        /* test code:
+        queue[0] = "a";
+        queue[1] = "b";
+        queue[2] = "c";
+        queue[3] = "d";
+        queue[4] = "e";
+        queue[5] = "f";
+        queue[6] = "g";
+        queue[7] = "h";
+        queue[8] = "i";
+        queue[9] = "j";
+        */
         StdRandom.shuffle(queue);
         for (int n = 0; n < k; n++)
             StdOut.println(queue[n]);
