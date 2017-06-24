@@ -1,0 +1,17 @@
+        // Create new array [0...n-1] if not already created
+        
+        if(randArr == null || max < 0)
+        {
+            randArr = new int[size];
+            max = size - 1;
+            for(int n = 0; n<size; n++)
+                randArr[n] = n;
+        }
+        // Choose a random element and switch it with the element at max
+        int el = StdRandom.uniform(max + 1);
+        //System.out.format("Rand el: %d\n", el);
+
+        int rNum = randArr[el];
+        randArr[el] = randArr[max];
+        randArr[max] = rNum;
+        max--;

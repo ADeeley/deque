@@ -6,7 +6,6 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 	private Node first, last;
 	private int size;
 	int max = 0;
-	int[] randArr;
 	// Member classes
 	private class Node{
 		Item item;
@@ -18,6 +17,10 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 		Node first, last;
 	}
 	// Methods
+	/* Iterator takes a snapshot of the queue at the time of instantiation and 
+	 * returns a random sample with each call to next(). 
+	 * Does not remove or add any elements
+	 */
 	public Iterator<Item> iterator() { return new ListIterator(); }
 	private class ListIterator implements Iterator<Item>
 	{
@@ -30,8 +33,7 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 			if(!(hasNext())) throw new java.util.NoSuchElementException();
 
 			Item item = current.item;
-			current = current.next;
-			return item;
+			return sample();
 		}
 
 	} 
@@ -79,9 +81,11 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 		return item;
 	}
 	public Item sample()
-	{
+
+		/* ** Potentially unnecessary code
 		// Create new array [0...n-1] if not already created
-		if(randArr == null)
+		
+		if(randArr == null || max < 0)
 		{
 			randArr = new int[size];
 			max = size - 1;
@@ -97,16 +101,17 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 		randArr[max] = rNum;
 		max--;
 
-		/* test start -------------------------------------
+	 	test start -------------------------------------
 		System.out.println("After RadomArr:");
 		for(int n : randArr)
 			System.out.format("%d, ", n);
 		System.out.println();
 		 test end ---------------------------------------
 		 */
-
+		
+		int randNum = StdRandom.uniform(size);
 		Node tmpFirst = first;
-		for(int i = rNum; i>0; i--)
+		for(int i = randNum; i>0; i--)
 			tmpFirst = tmpFirst.next;
 
 		return tmpFirst.item;
@@ -126,9 +131,21 @@ public class RandomisedQueue<Item> implements Iterable<Item>{
 			for(int j=0; j<trials*2; j++)
 				System.out.format("Returned %d\n\n", d.sample());
 
+			// Iterator tests
+			Iterator<Integer> it = d.iterator();
+			for(int j=0; j<trials*2; j++)
+				System.out.format("Iterator 1 returned %d\n", it.next());
+			
+			// Test that each iterator instance is unique	
+			RandomisedQueue<Integer> g = new RandomisedQueue<Integer>();
 
+			for(int i=0; i<trials; i++)
+				g.enqueue(i);
 
+			Iterator<Integer> et = g.iterator();
 
+			for(int j=0; j<trials*2; j++)
+				System.out.format("Iterator 2 returned %d\n", et.next());
 
 			/*
 			d.enqueue(1);
