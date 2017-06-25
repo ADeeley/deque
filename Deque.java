@@ -7,8 +7,9 @@ public class Deque<Item> implements Iterable<Item> {
     private int capacity = 10;
     private int size = 0;
     private Item[] deque = (Item[]) new Object[capacity];
-    private int first = capacity / 2;
-    private int last = capacity / 2;
+    // to change to private
+    public int first = capacity / 2;
+    public int last = capacity / 2;
     // Member classes
     // Constructor
     public Deque()
@@ -83,11 +84,16 @@ public class Deque<Item> implements Iterable<Item> {
     {
         // check if the array has room up front
         if (!(first > 0))
-        {
             expandDeque();
+
+        if (size == 0)
+            deque[first] = item;
+        else
+        {
+            deque[first - 1] = item;
+            first--;
         }
-        deque[first - 1] = item;
-        first--;
+
         size++;
 
     }
@@ -103,8 +109,14 @@ public class Deque<Item> implements Iterable<Item> {
         {
             expandDeque();
         }
-        deque[last + 1] = item;
-        last++;
+        if (size == 0)
+            deque[last] = item;
+        else
+        {
+            deque[last + 1] = item;
+            last++;
+        }
+
         size++;
     }
     /** 
@@ -116,7 +128,10 @@ public class Deque<Item> implements Iterable<Item> {
     {
         if (size <= 0) throw new java.util.NoSuchElementException();
         Item item = deque[first];
-        first++;
+
+        if (size > 1)
+            first++;
+
         size--;
         // shrink array if size = (capacity / 4)
         return item;
@@ -130,7 +145,10 @@ public class Deque<Item> implements Iterable<Item> {
     {
         if (size <= 0) throw new java.util.NoSuchElementException();
         Item item = deque[last];
-        last--;
+
+        if (size > 1)
+            last--;
+
         size--;
         // shrink array if size = (capacity / 4)
         return item;
@@ -184,11 +202,15 @@ public class Deque<Item> implements Iterable<Item> {
             assert d.removeFirst() == 0;
             assert d.size() == 0;
 
+            System.out.format("First: %d, Last: %d\n", d.first, d.last);
             d.addFirst(0);
             d.addLast(1);
+            System.out.format("First: %d, Last: %d\n", d.first, d.last);
             assert d.size() == 2;
-            assert d.removeFirst() == 0;
             assert d.removeLast() == 1;
+            System.out.format("First: %d, Last: %d\n", d.first, d.last);
+            assert d.removeFirst() == 0;
+            System.out.format("First: %d, Last: %d\n", d.first, d.last);
 
             d.addFirst(1);
             d.addLast(2);
