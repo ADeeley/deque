@@ -5,8 +5,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     // Variables
     private Node first = null;
     private Node last = null;
-    private int size;
-    private int max = 0;
+    private int size = 0;
+    private int index = 0;
+	private int[] randArr;
     // Member classes
     private class Node {
         private Item item;
@@ -78,42 +79,35 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         first = first.next;
 
         if (isEmpty()) last = null;
-
         size -= 1;
+
         return item;
     }
     public Item sample() 
     {
-        /* ** Potentially unnecessary code
-        // Create new array [0...n-1] if not already created
-        
-        if(randArr == null || max < 0)
-        {
+       	if (isEmpty()) throw new java.util.NoSuchElementException();
+		
+        // Create new array [0...n-1] if not already created, or if the array is of 
+        // a different size to the current queue
+        if(randArr == null || randArr.length < size ||randArr.length > size )
+	{
             randArr = new int[size];
-            max = size - 1;
             for(int n = 0; n<size; n++)
                 randArr[n] = n;
+			StdRandom.shuffle(randArr);
+            index = 0;
         }
-        // Choose a random element and switch it with the element at max
-        int el = StdRandom.uniform(max + 1);
-        //System.out.format("Rand el: %d\n", el);
-
-        int rNum = randArr[el];
-        randArr[el] = randArr[max];
-        randArr[max] = rNum;
-        max--;
-
-         test start -------------------------------------
-        System.out.println("After RadomArr:");
-        for(int n : randArr)
-            System.out.format("%d, ", n);
-        System.out.println();
-         test end ---------------------------------------
-         */
-       	if (isEmpty()) throw new java.util.NoSuchElementException();
-
-        int randNum = StdRandom.uniform(size);
-        Node tmpFirst = first;
+		// shuffle the array of random indexes
+	if (index >= size)
+        {
+            index = 0;
+            StdRandom.shuffle(randArr);
+        }
+        int randNum = randArr[index];
+		index++;
+		
+		// iterate over the queue until the desired node is found
+		Node tmpFirst = first;
         for (int i = randNum; i > 0; i--)
             tmpFirst = tmpFirst.next;
 
@@ -121,7 +115,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     }
     public static void main(String[] args) {
-        /*
         try{
             // set up trials number of  elements in a linked list queue with
             // their array indexes as their item
@@ -133,6 +126,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
             for(int j=0; j<trials*2; j++)
                 System.out.format("Returned %d\n\n", d.sample());
+			/*
 
             // Iterator tests
             Iterator<Integer> it = d.iterator();
@@ -190,12 +184,31 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             //System.out.println(a.dequeue());
             //a.dequeue();
             a.size();
+			*/
+            RandomizedQueue<String> a = new RandomizedQueue<String>();
+                        a.enqueue("A");
+                        a.enqueue("B");
+                        a.enqueue("C");
+                        a.enqueue("D");
+                        a.enqueue("E");
+                        a.enqueue("F");
+                        a.enqueue("G");
+                        a.enqueue("H");
+                        a.enqueue("I");
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
         }
 
         catch(java.util.NoSuchElementException e){
             System.out.print("No such element!");
         }
-            */
 
     };
 }

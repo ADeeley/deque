@@ -4,15 +4,12 @@ import java.util.Iterator;
 
 public class Deque<Item> implements Iterable<Item> {
     // Variables
-	private Node first = null;
-	private Node last = null;
-    private int dequeSize;
+    private int capacity = 10;
+    private int size = 0;
+    private Item[] deque = (Item[]) new Object[capacity];
+    private int first = capacity / 2;
+    private int last = capacity / 2;
     // Member classes
-    private class Node {
-        private Item item;
-        private Node next;
-        private Node prev;
-    }
     // Constructor
     public Deque()
     {
@@ -21,9 +18,9 @@ public class Deque<Item> implements Iterable<Item> {
     public Iterator<Item> iterator() { return new ListIterator(); }
     private class ListIterator implements Iterator<Item>
     {
-        private Node current = first;
+        // private Node current = first;
 
-        public boolean hasNext() { return current != null; }
+        public boolean hasNext() { return true; }
         public void remove()
 		{ 
 			throw new java.lang.UnsupportedOperationException(); 
@@ -32,45 +29,67 @@ public class Deque<Item> implements Iterable<Item> {
         {
             if (!(hasNext())) throw new java.util.NoSuchElementException();
 
-            Item item = current.item;
-            current = current.next;
-            return item;
+        //    Item item = current.item;
+        //    current = current.next;
+           return null;
         }
 
     } 
     public boolean isEmpty()
     { 
-        return (first == null || last == null); 
+        return size == 0;
     }
     public int size() 
     { 
-        return dequeSize; 
+        return size;
     }
     /** 
      * Adds a new node to the beginning of the deque
     * @param item is the data for the Node to store
     * @throw NullPointerException if client tries to add a null item
     */
+    private void expandDeque()
+    {
+            // double capacity
+        System.out.format("Triggered expandDeque(), capacity now %d\n", capacity);
+        Item[] newDeque = (Item[]) new Object[capacity * 2];
+        for (int a = 0; a < capacity; a++)
+            newDeque[a + (capacity / 2)] = deque[a];
+        
+        // update the locations of first and last in the deque
+        first = first + (capacity / 2);
+        last = last + (capacity / 2);
+        capacity *= 2;
+        deque = newDeque;
+
+    }
+
+    private void contractDeque()
+    {
+            // halve capacity
+        System.out.println("Triggered ContractDeque()");
+        Item[] newDeque = (Item[]) new Object[capacity / 2];
+        for (int a = 0; a < capacity; a++)
+            newDeque[a + (capacity / 4)] = deque[a];
+
+        first = first + (capacity / 2);
+        last = last + (capacity / 2);
+
+        capacity /= 2;
+        deque = newDeque;
+
+    }
     public void addFirst(Item item)
     {
-        if (item == null) throw new java.lang.NullPointerException();
-
-        Node oldFirst = first;
-        first = new Node();
-        first.item = item;
-        first.prev = null;
-
-        if (last == null)
+        // check if the array has room up front
+        if (!(first > 0))
         {
-            last = first;
-            first.next = null;
+            expandDeque();
         }
-        else
-        {
-            oldFirst.prev = first;
-            first.next = oldFirst;
-        }
-        dequeSize += 1;
+        deque[first - 1] = item;
+        first--;
+        size++;
+
     }
     /** 
      * Adds a new node to the end of the deque
@@ -79,24 +98,14 @@ public class Deque<Item> implements Iterable<Item> {
     */
     public void addLast(Item item)
     {
-        if (item == null) throw new java.lang.NullPointerException();
-
-        Node oldLast = last;
-        last = new Node();
-        last.item = item;
-        last.next = null;
-
-        if (first == null)
+        // check if the array has room up front
+        if (!(last < (capacity - 1)))
         {
-            first = last;
-            last.prev = null;
+            expandDeque();
         }
-        else
-        {
-            oldLast.next = last;
-            last.prev = oldLast;
-        }
-        dequeSize += 1;
+        deque[last + 1] = item;
+        last++;
+        size++;
     }
     /** 
      * Removes and returns the item from the from of the deque
@@ -105,27 +114,7 @@ public class Deque<Item> implements Iterable<Item> {
     */
     public Item removeFirst()
     {
-        if (isEmpty()) throw new java.util.NoSuchElementException();
-        Item item = first.item;
-        // test if first is the only node remaining
-        if (first.next == null) {
-            first = null;
-            last = null;
-            return item;
-        }
-
-        first = first.next;
-        first.prev = null;
-
-        if (isEmpty()) {
-            last = null;
-            first = null;
-        }
-
-
-        dequeSize -= 1;
-
-        return item;
+        return null;
     }
     /** 
      * Removes and returns the item from the from of the deque
@@ -134,38 +123,46 @@ public class Deque<Item> implements Iterable<Item> {
     */
     public Item removeLast()
     {
-        if (isEmpty()) throw new java.util.NoSuchElementException();
-        Item item = last.item;
-        // test if last is the only node remaining
-        if (last.prev == null) {
-            last = null;
-            first = null;
-            return item;
-        }
-
-        last = last.prev;
-        last.next = null;
-
-        if (isEmpty()) {
-            first = null;
-            last = null;
-        }
-        dequeSize -=1;
-
-        return item;
+        return null;
     }
 
 
     public static void main(String[] args)
     {
-		/*
-
         Deque<Integer> d = new Deque<Integer>();
         System.out.println("Tests______________\n");
         try {
-            d.addFirst(1);
-            d.addFirst(2);
-            d.addFirst(3);
+            // test addFirst
+            for (int el = 1; el< 100; el++)
+            {
+                d.addFirst(el);
+                assert d.size() == el;           
+            }
+            d = new Deque<Integer>();
+            // test addLast
+            for (int el = 1; el< 100; el++)
+            {
+                d.addLast(el);
+                assert d.size() == el;           
+            }
+            d = new Deque<Integer>();
+            // test alternating addLast / addFirst
+            int alt = true;
+            for (int el = 1; el< 100; el++)
+            {
+                if (alt)
+                {
+                    d.addLast(el);
+                    alt = false;
+                }
+                else
+                {
+                    d.addFirst(el);
+                    alt = true;
+                }
+                assert d.size() == el;           
+            }
+            /*
             System.out.println("Addfirst tests:\n");
             System.out.print((d.dequeSize == 3) ? "True\n" : "False\n");
             d.removeFirst();
@@ -230,13 +227,14 @@ public class Deque<Item> implements Iterable<Item> {
             System.out.println(a.removeFirst());
             a.removeFirst();
             a.size();
+        */
 
         }
         catch (java.util.NoSuchElementException e){
             System.out.print("No such element!");
         }
         
-		*/
+        /*
         Deque<Integer> d = new Deque<Integer>();
         assert d.isEmpty() == true : "IsEmpty test failed";
         //d.addFirst(8);
@@ -250,5 +248,6 @@ public class Deque<Item> implements Iterable<Item> {
         d.addFirst(8);
         assert (d.removeLast() == 8) : "Test failed";
         //assert (d.removeLast() == 8) : "Test failed";
+       */ 
     };
 }
