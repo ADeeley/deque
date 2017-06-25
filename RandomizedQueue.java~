@@ -3,44 +3,37 @@ import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
     // Variables
-    private Node first = null;
-    private Node last = null;
+    private int capacity = 10;
     private int size = 0;
-    private int index = 0;
-	private int[] randArr;
-    // Member classes
-    private class Node {
-        private Item item;
-        private Node next;
-    }
+    private Item[] deque = (Item[]) new Object[capacity];
+    public int first = 0;
+    public int last = 0;
+    private Item[] randArr;
+    private int choice = 0; // element for randomArr
     // Constructor
     public RandomizedQueue()
     {
     }
     // Methods
-    /* Iterator takes a snapshot of the queue at the time of instantiation and 
-     * returns a random sample with each call to next(). 
-     * Does not remove or add any elements
-     */
     public Iterator<Item> iterator() { return new ListIterator(); }
     private class ListIterator implements Iterator<Item>
     {
-        private Node current = first;
-
-        public boolean hasNext() { return current != null; }
-        public void remove() { throw new java.lang.UnsupportedOperationException(); }
+        public boolean hasNext() { return !(isEmpty()); }
+        public void remove() 
+        {
+            throw new java.lang.UnsupportedOperationException(); 
+        }
         public Item next()
         {
             if (!(hasNext())) throw new java.util.NoSuchElementException();
 
-            // Item item = current.item;
             return sample();
         }
 
     } 
     public boolean isEmpty()
     { 
-        return (first == null); 
+        return (size == 0); 
     }
     public int size() 
     { 
@@ -51,67 +44,88 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     * @param item is the data for the Node to store
     * @throw NullPointerException if client tries to add a null item
     */
-    public void enqueue(Item item)
+    private void expandDeque()
     {
-        if (item == null) throw new java.lang.IllegalArgumentException();
+            // double capacity
+        System.out.format("Triggered expandDeque(), capacity now %d\n", capacity);
+        Item[] newDeque = (Item[]) new Object[capacity * 2];
+        for (int a = 0; a < capacity; a++)
+            newDeque[a + (capacity / 2)] = deque[a];
+        
+        // update the locations of first and last in the deque
+        first = first + (capacity / 2);
+        last = last + (capacity / 2);
+        capacity *= 2;
+        deque = newDeque;
 
-        Node oldLast = last;
-        last = new Node();
-        last.item = item;
-        last.next = null;
+    }
+    private void contractDeque()
+    {
+            // halve capacity
+        System.out.println("Triggered ContractDeque()");
+        Item[] newDeque = (Item[]) new Object[capacity / 2];
+        for (int a = 0; a < capacity; a++)
+            newDeque[a + (capacity / 4)] = deque[a];
 
-        if (first == null)
-            first = last;
-        else
-            oldLast.next = last;
-        size += 1;
+        first = first + (capacity / 2);
+        last = last + (capacity / 2);
+
+        capacity /= 2;
+        deque = newDeque;
+
     }
     /** 
      * Removes and returns the item from the from of the queue 
      * @ throw java.util.NoSuchElementException() if attempting to remove an item
      *   from an empty deque
     */
+
+    public void enqueue(Item item)
+    {
+        // check if the array has room up front
+        if (item == null) throw new java.lang.IllegalArgumentException();
+
+        if (last >= capacity)
+            expandDeque();
+
+        if (size == 0)
+            deque[last] = item;
+        else
+        {
+            deque[last + 1] = item;
+            last++;
+        }
+
+        size++;
+
+    }
     public Item dequeue()
     {
        	if (isEmpty()) throw new java.util.NoSuchElementException();
-		Item item = first.item;
+        Item item = deque[first]; 
 
-        first = first.next;
+        if (size > 1)
+            first++;
 
-        if (isEmpty()) last = null;
-        size -= 1;
-
+        size--;
         return item;
     }
     public Item sample() 
     {
        	if (isEmpty()) throw new java.util.NoSuchElementException();
 		
-        // Create new array [0...n-1] if not already created, or if the array is of 
-        // a different size to the current queue
-        if(randArr == null || randArr.length < size ||randArr.length > size )
+        if (randArr == null)
 	{
-            randArr = new int[size];
-            for(int n = 0; n<size; n++)
-                randArr[n] = n;
-			StdRandom.shuffle(randArr);
-            index = 0;
-        }
-		// shuffle the array of random indexes
-	if (index >= size)
-        {
-            index = 0;
-            StdRandom.shuffle(randArr);
-        }
-        int randNum = randArr[index];
-		index++;
-		
-		// iterate over the queue until the desired node is found
-		Node tmpFirst = first;
-        for (int i = randNum; i > 0; i--)
-            tmpFirst = tmpFirst.next;
+            randArr = (Item[]) new Object[size];
 
-        return tmpFirst.item;
+            for (int a = first; a <= last; a++)
+            {
+                randArr[n] = deque[a];
+            }
+	    StdRandom.shuffle(randArr);
+        }
+
+        return randArr[choice];
 
     }
     public static void main(String[] args) {
@@ -195,15 +209,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
                         a.enqueue("G");
                         a.enqueue("H");
                         a.enqueue("I");
-                        System.out.println(a.sample());
-                        System.out.println(a.sample());
-                        System.out.println(a.sample());
-                        System.out.println(a.sample());
-                        System.out.println(a.sample());
-                        System.out.println(a.sample());
-                        System.out.println(a.sample());
-                        System.out.println(a.sample());
-                        System.out.println(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
+                        System.out.print(a.sample());
         }
 
         catch(java.util.NoSuchElementException e){

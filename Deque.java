@@ -1,7 +1,6 @@
 import java.util.Iterator;
 
 
-
 public class Deque<Item> implements Iterable<Item> {
     // Variables
     private int capacity = 10;
@@ -10,7 +9,6 @@ public class Deque<Item> implements Iterable<Item> {
     // to change to private
     public int first = capacity / 2;
     public int last = capacity / 2;
-    // Member classes
     // Constructor
     public Deque()
     {
@@ -19,20 +17,16 @@ public class Deque<Item> implements Iterable<Item> {
     public Iterator<Item> iterator() { return new ListIterator(); }
     private class ListIterator implements Iterator<Item>
     {
-        // private Node current = first;
-
-        public boolean hasNext() { return true; }
+        public boolean hasNext() { return !(isEmpty()); }
         public void remove()
-		{ 
-			throw new java.lang.UnsupportedOperationException(); 
-		}
+        { 
+            throw new java.lang.UnsupportedOperationException(); 
+        }
         public Item next()
         {
             if (!(hasNext())) throw new java.util.NoSuchElementException();
-
-        //    Item item = current.item;
-        //    current = current.next;
-           return null;
+            
+            return removeFirst();
         }
 
     } 
@@ -64,7 +58,6 @@ public class Deque<Item> implements Iterable<Item> {
         deque = newDeque;
 
     }
-
     private void contractDeque()
     {
             // halve capacity
@@ -83,6 +76,8 @@ public class Deque<Item> implements Iterable<Item> {
     public void addFirst(Item item)
     {
         // check if the array has room up front
+        if (item == null) throw new java.lang.IllegalArgumentException();
+
         if (!(first > 0))
             expandDeque();
 
@@ -105,6 +100,7 @@ public class Deque<Item> implements Iterable<Item> {
     public void addLast(Item item)
     {
         // check if the array has room up front
+        if (item == null) throw new java.lang.IllegalArgumentException();
         if (!(last < (capacity - 1)))
         {
             expandDeque();
@@ -222,92 +218,61 @@ public class Deque<Item> implements Iterable<Item> {
             assert d.removeFirst() == 2;
             assert d.removeFirst() == 3;
 
-            /*
-            System.out.println("Addfirst tests:\n");
-            System.out.print((d.dequeSize == 3) ? "True\n" : "False\n");
-            d.removeFirst();
-            d.removeFirst();
-            d.removeFirst();
-            System.out.print((d.dequeSize == 0) ? "True\n" : "False\n");
-            System.out.print("Isempty: ");
-            System.out.print((d.isEmpty() == true) ? "True\n" : "False\n");
-
-            System.out.println("Addlast tests:\n");
-            d.addLast(1);
-            d.addLast(2);
-            d.addLast(3);
-            System.out.print((d.dequeSize == 3) ? "True\n" : "False\n");
-            d.removeLast();
-            d.removeLast();
-            d.removeLast();
-            System.out.print((d.dequeSize == 0) ? "True\n" : "False\n");
-            System.out.print("Isempty: ");
-            System.out.print((d.isEmpty() == true) ? "True\n" : "False\n");
-
             d.addFirst(1);
-            d.addFirst(2);
-            d.addFirst(3);
-            System.out.println("Addfirst invert tests:\n");
-            System.out.print((d.dequeSize == 3) ? "True\n" : "False\n");
-            d.removeLast();
-            d.removeLast();
-            d.removeLast();
-            System.out.print((d.dequeSize == 0) ? "True\n" : "False\n");
-            System.out.print("Isempty: ");
-            System.out.print((d.isEmpty() == true) ? "True\n" : "False\n");
-
-            System.out.println("Addlast invert tests:\n");
-            d.addLast(1);
             d.addLast(2);
+            d.addFirst(0);
             d.addLast(3);
-            System.out.print((d.dequeSize == 3) ? "True\n" : "False\n");
-            d.removeFirst();
-            d.removeFirst();
-            d.removeFirst();
-            System.out.print((d.dequeSize == 0) ? "True\n" : "False\n");
-            System.out.print("Isempty: ");
-            System.out.print((d.isEmpty() == true) ? "True\n" : "False\n");
+            assert d.size() == 4;
+            assert d.removeFirst() == 0;
+            assert d.removeLast() == 3;
+            assert d.removeFirst() == 1;
+            assert d.removeLast() == 2;
 
-            // Iterator tests
+            // Iterator tests 1
+            d = new Deque<Integer>();
             System.out.println("Iterator tests:\n");
-            d.addLast(1);
-            d.addLast(2);
-            d.addLast(3);
+
+            for (int el = 0; el< 5; el++)
+                d.addFirst(el);
+
             Iterator<Integer> i = d.iterator();
             System.out.println(i.next());
             System.out.println(i.next());
-            System.out.println(i.hasNext());
+            assert i.hasNext() == true;
             System.out.println(i.next());
-            System.out.println(i.hasNext());
-            //System.out.println(i.next());
+            assert i.hasNext() == true;
+            System.out.println(i.next());
+            System.out.println(i.next());
+            assert i.hasNext() == false;
 
-            // Type tests
-            Deque<String> a = new Deque<String>();
-            a.addFirst("hello");
-            System.out.println(a.removeFirst());
-            a.removeFirst();
-            a.size();
-        */
+            // Iterator tests 2
+            d = new Deque<Integer>();
+            System.out.println("Iterator tests:\n");
+            
+            d.addFirst(1);
+            d.addLast(2);
+            d.addFirst(0);
+            d.addLast(3);
 
+            i = d.iterator();
+            System.out.println(i.next());
+            System.out.println(i.next());
+            assert i.hasNext() == true;
+            System.out.println(i.next());
+            assert i.hasNext() == true;
+            System.out.println(i.next());
+            assert i.hasNext() == false;
+            
+            // Iterator tests 3
+            d = new Deque<Integer>();
+            System.out.println("Iterator tests:\n");
+
+            i = d.iterator();
+            assert i.hasNext() == false;
         }
         catch (java.util.NoSuchElementException e){
-            System.out.print("No such element!");
+            System.out.format("No such element! %s", e);
         }
         
-        /*
-        Deque<Integer> d = new Deque<Integer>();
-        assert d.isEmpty() == true : "IsEmpty test failed";
-        //d.addFirst(8);
-        d.addLast(1);
-        d.addLast(2);
-        d.addFirst(3);
-        assert (d.removeLast() == 2) : "Test failed";
-        assert (d.removeLast() == 1) : "Test failed";
-        assert (d.removeFirst() == 3) : "Test failed";
-        assert (d.isEmpty() == true) : "IsEmpty test failed";
-        d.addFirst(8);
-        assert (d.removeLast() == 8) : "Test failed";
-        //assert (d.removeLast() == 8) : "Test failed";
-       */ 
     };
 }

@@ -1,0 +1,17 @@
+    public void addFirst(Item item)
+    {
+        // check if the array has room up front
+        if (!(first > 0))
+            expandDeque();
+
+        if (size == 0)
+            deque[first] = item;
+        else
+        {
+            deque[first - 1] = item;
+            first--;
+        }
+
+        size++;
+
+    }
