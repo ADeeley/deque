@@ -114,7 +114,12 @@ public class Deque<Item> implements Iterable<Item> {
     */
     public Item removeFirst()
     {
-        return null;
+        if (size <= 0) throw new java.util.NoSuchElementException();
+        Item item = deque[first];
+        first++;
+        size--;
+        // shrink array if size = (capacity / 4)
+        return item;
     }
     /** 
      * Removes and returns the item from the from of the deque
@@ -123,32 +128,41 @@ public class Deque<Item> implements Iterable<Item> {
     */
     public Item removeLast()
     {
-        return null;
+        if (size <= 0) throw new java.util.NoSuchElementException();
+        Item item = deque[last];
+        last--;
+        size--;
+        // shrink array if size = (capacity / 4)
+        return item;
     }
 
 
     public static void main(String[] args)
     {
         Deque<Integer> d = new Deque<Integer>();
+        assert d.isEmpty() == true;
         System.out.println("Tests______________\n");
         try {
-            // test addFirst
-            for (int el = 1; el< 100; el++)
+            // test addFirst----------------------
+            for (int el = 1; el< 1000; el++)
             {
                 d.addFirst(el);
-                assert d.size() == el;           
+                assert d.size() == el; 
+   
             }
+            assert d.isEmpty() == false;
             d = new Deque<Integer>();
-            // test addLast
-            for (int el = 1; el< 100; el++)
+            // test addLast-----------------------
+            for (int el = 1; el< 1000; el++)
             {
                 d.addLast(el);
                 assert d.size() == el;           
             }
+            assert d.isEmpty() == false;
             d = new Deque<Integer>();
             // test alternating addLast / addFirst
-            int alt = true;
-            for (int el = 1; el< 100; el++)
+            boolean alt = true;
+            for (int el = 1; el< 1000; el++)
             {
                 if (alt)
                 {
@@ -162,6 +176,28 @@ public class Deque<Item> implements Iterable<Item> {
                 }
                 assert d.size() == el;           
             }
+            assert d.isEmpty() == false;
+
+            // test removing and adding
+            d = new Deque<Integer>();
+            d.addFirst(0);
+            assert d.removeFirst() == 0;
+            assert d.size() == 0;
+
+            d.addFirst(0);
+            d.addLast(1);
+            assert d.size() == 2;
+            assert d.removeFirst() == 0;
+            assert d.removeLast() == 1;
+
+            d.addFirst(1);
+            d.addLast(2);
+            d.addFirst(0);
+            d.addLast(3);
+            assert d.size() == 2;
+            assert d.removeFirst() == 0;
+            assert d.removeLast() == 1;
+
             /*
             System.out.println("Addfirst tests:\n");
             System.out.print((d.dequeSize == 3) ? "True\n" : "False\n");
